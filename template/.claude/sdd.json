@@ -1,0 +1,15 @@
+{
+  "_doc": "Project settings of spec-first-kit. setup.mjs adds new keys and never changes your values. Commands are filled by /onboard from commands that were actually run: typecheck and tests feed the stop gate (use quiet reporters; tests = the full unit suite), lint and build join them in doctor --full, the one baseline run. format runs after every file edit, {file} is the edited path (e.g. \"npx prettier --write --ignore-unknown {file}\"); empty = off. formatScope: all | new; \"new\" formats only files with no committed version, for a repo whose committed code the formatter would still change. stopGate: off | typecheck | tests. stopGateRetries: how many times the gate may block one stop sequence. testFiles: a regular expression for test file paths, only when trace.mjs does not find the tests by name (empty = built-in patterns). packages: in a monorepo, the folders where people start Claude Code (\"packages/*\" = every folder under packages/); sync.mjs gives each a .claude/settings.json that runs the root hooks. guardRules: shell commands guard.mjs blocks for this project, each { \"pattern\": <JavaScript regular expression tested against the whole command, case-insensitive>, \"why\": <the reason the agent sees> }, e.g. { \"pattern\": \"\\\\bterraform\\\\s+apply\\\\b\", \"why\": \"applying infrastructure changes\" }. codex: true when anyone uses Codex here; switch it with setup.mjs --codex or --no-codex.",
+  "typecheck": "",
+  "lint": "",
+  "tests": "",
+  "build": "",
+  "format": "",
+  "formatScope": "all",
+  "stopGate": "off",
+  "stopGateRetries": 1,
+  "testFiles": "",
+  "packages": [],
+  "guardRules": [],
+  "codex": false
+}

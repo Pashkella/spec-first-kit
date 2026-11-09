@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git show*)",
+      "Bash(git branch*)",
+      "Bash(git merge-base*)",
+      "Bash(git ls-files*)",
+      "Bash(git rev-parse*)",
+      "Bash(git switch -c *)",
+      "Bash(git add *)",
+      "Bash(openspec list*)",
+      "Bash(openspec show*)",
+      "Bash(openspec status*)",
+      "Bash(openspec validate*)",
+      "Bash(openspec instructions*)",
+      "Bash(openspec new change *)",
+      "Bash(openspec archive *)",
+      "Bash(node .claude/skills/onboard/scripts/doctor.mjs*)",
+      "Bash(node .claude/skills/onboard/scripts/sync.mjs*)",
+      "Bash(node .claude/skills/sdd/scripts/snapshot.mjs*)",
+      "Bash(node .claude/skills/sdd/scripts/trace.mjs*)",
+      "Bash(npx -y ctx7@0.8.2 library *)",
+      "Bash(npx -y ctx7@0.8.2 docs *)",
+      "Bash(ls*)",
+      "Bash(rg *)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.local)",
+      "Read(./.env.*.local)",
+      "Read(./.env.production)",
+      "Read(./.env.staging)",
+      "Edit(./openspec/changes/archive/**)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|clear|compact",
+        "hooks": [
+          { "type": "command", "command": "node", "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/session-start.mjs"], "timeout": 10 }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          { "type": "command", "command": "node", "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/guard.mjs"], "timeout": 15 }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "node", "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/post-edit.mjs"], "timeout": 60 }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "node", "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/stop-gate.mjs"], "timeout": 600 }
+        ]
+      }
+    ]
+  }
+}

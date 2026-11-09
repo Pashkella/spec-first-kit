@@ -1,0 +1,42 @@
+schema: spec-driven
+
+context: |
+  Project: <name> — <one line: what it is and for whom>.
+  Stack: <languages, frameworks, database, test runner — filled by /onboard>.
+  Architecture rules the code actually follows: <layers, module boundaries, what must not import what>.
+
+  Language: proposal, requirement and scenario prose in English; design.md and tasks.md in English.
+  OpenSpec headings, SHALL/MUST, WHEN/THEN/AND, identifiers and file paths stay in English.
+  Specs describe observable behavior, not implementation.
+  A plan never authorizes changes to external systems (production, payments, third-party accounts).
+  Keep every artifact short; formats and limits are in .claude/skills/sdd/formats.md.
+
+rules:
+  proposal:
+    - At most ~20 lines; Why in 1-2 sentences; include an "Out of scope" bullet
+    - Record minor decisions as one-line Assumptions instead of asking about them
+    - Split the change if it needs more than ~15 tasks or ~500 changed lines
+  specs:
+    - One behavior per requirement, stated in one sentence with SHALL or MUST
+    - 1-3 scenarios per requirement (main path plus the error or edge case that matters), one line per WHEN and THEN
+    - No near-duplicate scenarios, no framework defaults, no implementation details
+    - More than ~12 requirements in one capability means the capability should be split
+    - A requirement taken from a product document keeps a source comment on the line under its header
+  design:
+    - Only for tier L (cross-cutting, new dependency, migration, security-sensitive); otherwise skip design.md
+    - At most ~40 lines - Decisions with the rejected alternative, Files, Test seams, Risks; do not restate the proposal
+  tasks:
+    - 'Format: "- [ ] N.M <verb + what> (Req: <name>) — verify: <test or command>"'
+    - Tests live in the group that builds the behavior; no trailing "write tests" group
+    - Task groups touch disjoint files
+
+operations:
+  apply:
+    guidance:
+      - Small M changes may be implemented by the main session; delegate bounded or multi-group work to the implementer
+      - The main session owns user decisions, review selection, and final verification
+      - Tick a task only after its verify step passes
+  archive:
+    guidance:
+      - Archive on the feature branch after review passes, so specs and code merge together
+      - Warn the user before archiving a delta that removes or renames a requirement

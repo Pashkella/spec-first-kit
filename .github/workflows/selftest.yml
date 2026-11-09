@@ -1,0 +1,40 @@
+name: selftest
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '17 5 * * 1' # Mondays: the latest OpenSpec release, to see a break before bumping the pin
+
+env:
+  OPENSPEC_VERSION: 1.16.1 # the version the kit is tested with; bump it in its own commit
+
+jobs:
+  selftest:
+    if: github.event_name != 'schedule'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [20, 22]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm install -g @fission-ai/openspec@${{ env.OPENSPEC_VERSION }}
+      - run: git config --global init.defaultBranch main
+      - run: node test/selftest.mjs
+
+  openspec-latest:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: npm install -g @fission-ai/openspec@latest
+      - run: git config --global init.defaultBranch main
+      - run: node test/selftest.mjs

@@ -1,0 +1,15 @@
+{
+  "name": "spec-first-kit",
+  "version": "1.0.0",
+  "description": "Spec-driven development kit for Claude Code and Codex: OpenSpec workflow, subagents, skills and hooks from one source.",
+  "author": "Pashkella",
+  "license": "MIT",
+  "homepage": "https://github.com/Pashkella/spec-first-kit",
+  "repository": { "type": "git", "url": "git+https://github.com/Pashkella/spec-first-kit.git" },
+  "type": "module",
+  "bin": { "spec-first-kit": "setup.mjs" },
+  "files": ["setup.mjs", "gitignore.kit", "template", "README.md", "LICENSE"],
+  "engines": { "node": ">=20.12" },
+  "scripts": { "test": "node test/selftest.mjs" },
+  "keywords": ["claude-code", "codex", "openspec", "spec-driven-development", "agents", "harness"]
+}
