@@ -152,10 +152,13 @@ function agentsMd(dir, codex) {
     const paths = list(splitFrontmatter(read(join(root, f))), 'paths');
     return `- ${paths.length ? paths.map((p) => `\`${p}\``).join(', ') : 'every file'} → \`.claude/rules/${f}\``;
   });
-  const lines = !codex ? [] : [
-    `Codex: \`.agents/skills/\` and \`.codex/\` are generated from \`.claude/\` by \`node ${GENERATOR}\`; never edit them.`,
-    ...(rows.length ? ['Before editing a file, read the rule for its path (Claude Code loads it by itself):', ...rows] : [])];
-  const block = [RULES[0], ...lines, RULES[1]].join(eol);
+  // Blank lines between the markers, the text and the list, as prettier prints Markdown: otherwise formatting
+  // AGENTS.md and the next sync keep rewriting the block back and forth.
+  const parts = !codex ? [] : [
+    [`Codex: \`.agents/skills/\` and \`.codex/\` are generated from \`.claude/\` by \`node ${GENERATOR}\`; never edit them.`,
+      ...(rows.length ? ['Before editing a file, read the rule for its path (Claude Code loads it by itself):'] : [])].join(eol),
+    ...(rows.length ? [rows.join(eol)] : [])];
+  const block = [RULES[0], ...parts, RULES[1]].join(eol + eol);
   if (marked) return text.slice(0, start) + block + text.slice(end + RULES[1].length);
   const heading = text.match(/^## Conventions[^\n]*\n/m);
   if (!heading) return `${text.replace(/\s*$/, '')}${eol}${eol}${block}${eol}`;

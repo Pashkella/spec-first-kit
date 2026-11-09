@@ -329,6 +329,7 @@ writeLock({ '.claude/skills/sdd/flow.md': sha('flow of an older kit\n'), '.claud
   '.claude/skills/sdd/old-notes.md': sha('a file an older kit shipped\n'), '.claude/skills/sdd/old-edited.md': sha('as the kit wrote it\n') });
 appendFileSync(join(withDoc, '.claude/hooks/guard.mjs'), '\n// local edit\n');
 writeFileSync(join(withDoc, 'docs/architecture.md'), '# Architecture\n\nFilled by onboard.\n');
+writeFileSync(join(withDoc, 'AGENTS.md'), read(join(withDoc, 'AGENTS.md')).replace('<project name>', 'with-doc'));
 rmSync(join(withDoc, 'docs/product/brief.md'));
 setConfig(withDoc, { tests: 'npm test', guardRules: [{ pattern: 'kubectl delete', why: 'deleting cluster resources' }] });
 const configBefore = json(read(cfgFile(withDoc)));
@@ -338,6 +339,7 @@ check('a plain run reports outdated kit files and replaces nothing', r.stdout.in
 r = setup(withDoc, '--update');
 check('--update replaces kit files unchanged since the kit wrote them, with a backup', read(join(withDoc, '.claude/skills/sdd/flow.md')) === kitFile('.claude/skills/sdd/flow.md')
   && read(join(withDoc, '.claude/agents/implementer.md')) === kitFile('.claude/agents/implementer.md') && r.stdout.includes('kit-backup'), r.stdout);
+check('--update of an onboarded project does not ask for /onboard', !r.stdout.includes('run /onboard'), r.stdout);
 check('--update keeps a kit file changed here and leaves the new version next to it', read(join(withDoc, '.claude/hooks/guard.mjs')).includes('local edit')
   && /keep +\.claude\/hooks\/guard\.mjs \(changed here/.test(r.stdout) && read(join(withDoc, '.claude/.cache/kit-new/.claude/hooks/guard.mjs')) === kitFile('.claude/hooks/guard.mjs'), r.stdout);
 check('--update keeps a filled template and a deleted one stays deleted', read(join(withDoc, 'docs/architecture.md')).includes('Filled by onboard')
@@ -377,6 +379,10 @@ writeFileSync(join(cx, '.claude/rules/ui.md'), '---\npaths:\n  - "src/ui/**"\n--
 check('sync --check notices a new path rule', sync('--check').status === 1);
 sync();
 check('AGENTS.md path-rules block lists the rule', read(join(cx, 'AGENTS.md')).includes('- `src/ui/**` → `.claude/rules/ui.md`') && sync('--check').status === 0);
+// prettier puts a blank line between an HTML comment, a paragraph and a list; a block without them would flip back
+// and forth between a formatted AGENTS.md and the next sync.
+check('AGENTS.md path-rules block is laid out as prettier prints it',
+  /<!-- spec-first-kit:path-rules -->\n\nCodex: [^\n]+\nBefore editing [^\n]+\n\n- `src\/ui\/\*\*` [^\n]+\n\n<!-- \/spec-first-kit:path-rules -->\n/.test(read(join(cx, 'AGENTS.md'))), read(join(cx, 'AGENTS.md')));
 const cxLock = join(cx, '.claude/sdd.lock.json');
 // git with core.autocrlf=true (the Git for Windows default) checks every text file out with CRLF line endings.
 const toCrlf = (dir) => {

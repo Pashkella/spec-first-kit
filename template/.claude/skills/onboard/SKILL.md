@@ -57,7 +57,8 @@ covers the rest of onboarding. Prepare the `.claude/` files first, then write th
   `.claude/sdd.json`), generated paths in Never, the owner's language. Keep the file lean: procedures belong in skills,
   layer conventions in `.claude/rules/`. Test commands use a quiet reporter that still prints failures (`vitest --reporter=dot`,
   `jest --silent`, `pytest -q`, `go test ./...`): a command that prints thousands of lines on success burns context
-  on every run.
+  on every run. Leave the block between the `<!-- spec-first-kit:path-rules -->` markers alone: `sync.mjs` writes it
+  (step 6), so do not edit its lines or copy them elsewhere in the file.
 - `.claude/sdd.json`: `typecheck`, `lint`, `tests` (the quiet full suite) and `build`, each the command
   or `""`; `format` (a command with `{file}`, e.g. `npx prettier --write --ignore-unknown {file}`, or `""`). Before
   setting `format`, run the formatter's check over the repo once (`npx prettier --check .`). Committed files it would
@@ -132,8 +133,10 @@ onboarding wrote.
 Then `node .claude/skills/onboard/scripts/sync.mjs` when Codex is on or `packages` is not empty: it writes the Codex
 copies and the settings stub of each listed package. A `skip` line means a Codex skill, agent or hooks file of the
 same name, or a package's own `.claude/settings.json`, already exists: show the user, then merge it by hand or re-run
-with `--force` (the old file is backed up). Then `node .claude/skills/onboard/scripts/doctor.mjs` until it shows no
-FAIL. With Codex, remind the user that Codex runs project hooks only after they trust them with `/hooks`.
+with `--force` (the old file is backed up). If `format` is set, run it once on each file onboarding wrote outside the
+formatter's ignores (`AGENTS.md`, `CLAUDE.md`, `docs/`): the hook formats only what an agent edits, and only new
+files with `formatScope: "new"`, so these would fail the project's own format check. Then
+`node .claude/skills/onboard/scripts/doctor.mjs` until it shows no FAIL. With Codex, remind the user that Codex runs project hooks only after they trust them with `/hooks`.
 
 ## 7. Report
 

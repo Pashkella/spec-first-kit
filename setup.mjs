@@ -261,8 +261,9 @@ if (codex || config?.packages?.length || Object.keys(lock?.generated || {}).leng
 const isGit = spawnSync('git', ['rev-parse', '--is-inside-work-tree'], { cwd: dir, encoding: 'utf8' }).status === 0;
 const hasOpenspec = spawnSync('openspec --version', { shell: true, encoding: 'utf8' }).status === 0;
 const onboard = source ? `onboard ${source}` : 'onboard';
+// The same signal as the session-start hook: /onboard replaces the template's first line.
+const onboarded = existsSync(join(dir, 'AGENTS.md')) && !read(join(dir, 'AGENTS.md')).includes('<project name>');
 console.log(`
 Next:
-${isGit ? '' : '  - git init: the hooks and the SDD flow use git (branches, diffs, the stop gate).\n'}${hasOpenspec ? '' : '  - npm install -g @fission-ai/openspec   (the sdd skill calls the openspec CLI)\n'}  - Claude Code: open the project and run /${onboard}
-${codex ? `  - Codex: $${onboard}, then /hooks to trust the project hooks\n` : ''}  - Then: node .claude/skills/onboard/scripts/doctor.mjs, and a first change with /sdd
+${isGit ? '' : '  - git init: the hooks and the SDD flow use git (branches, diffs, the stop gate).\n'}${hasOpenspec ? '' : '  - npm install -g @fission-ai/openspec   (the sdd skill calls the openspec CLI)\n'}${onboarded ? '' : `  - Claude Code: open the project and run /${onboard}\n`}${codex ? `  - Codex: ${onboarded ? '' : `$${onboard}, then `}/hooks to trust the project hooks\n` : ''}  - ${onboarded ? 'Check' : 'Then'}: node .claude/skills/onboard/scripts/doctor.mjs${onboarded ? '' : ', and a first change with /sdd'}
 `);
