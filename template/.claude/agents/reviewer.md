@@ -27,7 +27,8 @@ The work is usually not committed (agents leave commits to the user) and new fil
 
 Leave out noise from every diff: `-- . ':(exclude,glob)**/*.lock' ':(exclude,glob)**/*.lockb' ':(exclude,glob)**/*-lock.json' ':(exclude,glob)**/*-lock.yaml' ':(exclude,glob)**/*.snap' ':(exclude,glob)**/generated/**' ':(exclude,glob)dist/**' ':(exclude,glob).agents/**' ':(exclude,glob).codex/**'`.
 Start with `git diff --stat <base> <tree> -- <those pathspecs>`, then read `git diff <base> <tree> -- <file>` file by
-file and only as much surrounding code as a finding needs. A file the stat lists as new is the whole file.
+file. Read each changed function in full, not just the hunk: code that looks wrong in isolation may be right in
+context, and the reverse. A file the stat lists as new is the whole file.
 
 **Re-review** (`since` given): take a new snapshot, check only the open findings and `git diff <since> <tree>`; run
 only the tests of the affected scenarios. Skip steps 2–3 for everything else.
@@ -52,6 +53,14 @@ when `security: yes` or the diff touches auth, permissions, payments, uploads, o
 rendering of user content. Also check: every changed line traces to the task; no speculative abstraction or dead code;
 no logic duplicated from an existing helper; tests assert behavior, not internals, and mock only at boundaries;
 error and empty states are handled; names are clear.
+
+Look for, in this order:
+- Bugs: wrong conditions or branches, off-by-one, null/empty/undefined, races, errors thrown where nobody catches them.
+- Security, on every diff: treat input as untrusted unless you can show otherwise, and trace it to where it is
+  validated and authorized (the server, not the UI or the caller). Injection, XSS, SSRF, open redirect, path
+  traversal, secrets in logs or responses, access across users or tenants, sensitive operations that fail open.
+  A security finding names the attacker-controlled input, the missing check and the impact.
+- Performance, only when obvious: O(n²) on unbounded data, N+1 queries, blocking I/O on a hot path.
 
 Gate for every finding; drop it or lower its severity if any answer is "no":
 - I can cite `file:line`.

@@ -6,6 +6,7 @@
 | `skills/context7/` (rewritten and shortened from `skills/find-docs`) | [upstash/context7 @ eabe369](https://github.com/upstash/context7) | MIT, notice below |
 | Working rules in the Conventions of `AGENTS.md` (condensed) | [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) | MIT |
 | Review gate in `agents/reviewer.md`, `review-rules/reliability/no-silent-failures.md`, secret patterns in `hooks/guard.mjs`, sample-and-expand budget in `agents/spec-miner.md` | ideas from [affaan-m/ECC](https://github.com/affaan-m/ECC) | MIT |
+| "Look for" list and full-function reading in `agents/reviewer.md` | ideas from [vercel-labs/open-agents](https://github.com/vercel-labs/open-agents) (`.agents/skills/code-review`) | MIT |
 | Stop-gate pattern in `hooks/stop-gate.mjs` | idea from [humanlayer/humanlayer](https://github.com/humanlayer/humanlayer) | Apache-2.0 |
 | `docs/solutions/` and the compound step | idea from [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin) | MIT |
 | Everything else: SDD orchestrator, intake, agents, hooks, scripts | [Pashkella/spec-first-kit](https://github.com/Pashkella/spec-first-kit), first built in `expofp/efp3d-sandbox` | MIT |
